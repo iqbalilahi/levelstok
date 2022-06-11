@@ -50,4 +50,4 @@ application/logs/*
 /vendor/
 .vscode
 *.sql
-!harviacode/*
+harviacode/*
