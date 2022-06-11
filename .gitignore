@@ -50,4 +50,4 @@ application/logs/*
 /vendor/
 .vscode
 *.sql
-harviacode
+folder_to_ignore/harviacode
