@@ -79,6 +79,11 @@ class Sch_produksi_model extends CI_Model
         $this->db->update($this->table, $data);
     }
 
+    function view_where_noisdelete($id)
+    {
+        $this->db->where($this->id,$id);
+    }
+
     // delete data
     function delete($id)
     {

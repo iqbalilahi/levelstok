@@ -229,54 +229,31 @@ class Sch_produksi extends CI_Controller
                     continue;
                 } else {
 					$data_id = array(
-						'NOINDUK'  => $value[0]
+						'id_produksi'  => $value[0]
 					);
-                    $arrayCustomerQuote = array(
-                        'NOINDUK' => $value[0],
-                        'PASSWORD' => hash('sha512', md5($value[17])),
-                        'NOREG' => $value[1],
-                        'NMSISWA' => $value[2],
-                        'TPLHR' => $value[3],
-                        'TGLHR' => $value[4],
-                        'JK' => $value[5],
-                        'AGAMA' => $value[6],
-                        'TAHUN' => $value[7],
-                        'PS' => $value[8],
-                        'KDWARGA' => $value[9],
-                        'EMAIL' => $value[10],
-                        'TELP' => $value[11],
-                        'ALAMATRUMAH' => $value[12],
-                        'KELURAHAN' => $value[13],
-                        'KECAMATAN' => $value[14],
-                        'NMBAPAK'   => $value[15],
-						'NIKBAPAK' => $value[16],
-                        'NMIBU'   => $value[17],
-						'NIKIBU'   => $value[18],
-                        'KDPOS'   => $value[19],
-                        'ANAKKE'   => $value[20],
-						'BERATBADAN'  => $value[21],
-						'TINGGIBADAN' => $value[22],
-						'STATUSANAK' => $value[23],
-						'JMLSAUDARA' => $value[24],
-						'JARAK' => $value[25],
-						'KENDARAAN' => $value[26],
-						'PEKERJAANORTU' => $value[27],
-						'PEKERJAANORTU2' => $value[28],
-                        'createdAt'    => date('Y-m-d H:i:s')
+
+                    $data_sch = array(
+                        'id_produksi' => $value[0],
+                        'kd_produksi' => $value[17],
+                        'id_model' => $value[1],
+                        'id_bom' => $value[2],
+                        'stok_pemakaian' => $value[3],
+                        'tgl_produksi' => $value[4],
+                        'hasil_stok' => $value[5]
 					);
-					$cek = $this->model_mssiswa->view_where_noisdelete($data_id, 'mssiswa')->num_rows();
+					$cek = $this->Sch_produksi_model->view_where_noisdelete($data_id)->num_rows();
 					if($cek > 0) {
-						$result = $this->model_mssiswa->update($data_id, $arrayCustomerQuote, 'mssiswa');
+						$result = $this->Sch_produksi_model->update($this->input->post($data_id, TRUE), $data_sch);
 					} else {
-						$result = $this->model_mssiswa->insert($arrayCustomerQuote, 'mssiswa');
+						$result = $this->Sch_produksi_model->insert($data_sch);
 					}
                 }
             }
-            if ($result) {
-                $result = 1;
+            if ($result == 1) {
+                $this->session->set_flashdata('message', 'Update/Insert Record Success');
             }
-
-            echo json_encode($result);
+            $this->session->set_flashdata('message', 'Sorry Record Error');
+            redirect(site_url('sch_produksi'));
         
 	}
 
