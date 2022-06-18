@@ -169,7 +169,15 @@ class Sch_produksi extends CI_Controller
         xlsBOF();
 
         $kolomhead = 0;
-        xlsWriteLabel($tablehead, $kolomhead++, "No");
+    xlsWriteLabel($tablehead, $kolomhead++, "No");
+	xlsWriteLabel($tablehead, $kolomhead++, "Kd Produksi");
+	xlsWriteLabel($tablehead, $kolomhead++, "Id Model");
+	xlsWriteLabel($tablehead, $kolomhead++, "Stok Pemakaian");
+	xlsWriteLabel($tablehead, $kolomhead++, "Tgl Produksi");
+	xlsWriteLabel($tablehead, $kolomhead++, "Hasil Stok");
+    
+    xlsWriteLabel($tablehead, $kolomhead++, "");
+    xlsWriteLabel($tablehead, $kolomhead++, "No");
 	xlsWriteLabel($tablehead, $kolomhead++, "Kd Produksi");
 	xlsWriteLabel($tablehead, $kolomhead++, "Id Model");
 	xlsWriteLabel($tablehead, $kolomhead++, "Stok Pemakaian");
