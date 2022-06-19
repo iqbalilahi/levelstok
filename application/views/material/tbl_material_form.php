@@ -7,7 +7,7 @@
             </div>
             <form action="<?php echo $action; ?>" method="post">
 
-                <table class='table table-bordered>' <tr>
+                <table class='table table-bordered'> <tr>
                     <td>Nama Supplier <?php echo form_error('id_supplier') ?></td>
                     <td>
                         <div class="form-group">
@@ -17,7 +17,7 @@
                                 <?php
                                 foreach ($id_supplier as $sup) {
                                 ?>
-                                    <!--di sini kita tambahkan class berisi id provinsi-->
+                                    <!--di sini kita tambahkan class berisi id supplier-->
                                     <option <?php echo $supplier_selected == $sup->id_supplier ? 'selected="selected"' : '' ?> class="<?php echo $sup->id_supplier ?>" value="<?php echo $sup->id_supplier ?>"><?php echo $sup->nama_supplier; ?></option>
                                 <?php
                                 }
@@ -37,7 +37,7 @@
                                     <?php
                                     foreach ($id_kat_material as $kat) {
                                     ?>
-                                        <!--di sini kita tambahkan class berisi id provinsi-->
+                                        <!--di sini kita tambahkan class berisi id kategori material-->
                                         <option <?php echo $kat_material_selected == $kat->id_kat_material ? 'selected="selected"' : '' ?> class="<?php echo $kat->id_kat_material ?>" value="<?php echo $kat->id_kat_material ?>"><?php echo $kat->nama_kat_material; ?></option>
                                     <?php
                                     }

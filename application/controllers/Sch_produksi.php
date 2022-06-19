@@ -10,6 +10,8 @@ class Sch_produksi extends CI_Controller
         parent::__construct();
         is_login();
         $this->load->model('Sch_produksi_model');
+        $this->load->model('Bom_model');
+        // $this->load->model('Model_model');
         $this->load->library('form_validation');        
 	$this->load->library('datatables');
     }
@@ -32,6 +34,7 @@ class Sch_produksi extends CI_Controller
 		'id_produksi' => $row->id_produksi,
 		'kd_produksi' => $row->kd_produksi,
 		'id_model' => $row->id_model,
+		'id_bom' => $row->id_bom,
 		'stok_pemakaian' => $row->stok_pemakaian,
 		'tgl_produksi' => $row->tgl_produksi,
 		'hasil_stok' => $row->hasil_stok,
@@ -43,6 +46,26 @@ class Sch_produksi extends CI_Controller
         }
     }
 
+    function get_model()
+    {
+        $id = $this->input->post('id_bom');
+        if ($id != NULL) 
+        {
+            $data = $this->Bom_model->get_bomid($id);
+            echo $data;
+        }
+    }
+
+    function get_qty()
+    {
+        $id = $this->input->post('id_bom');
+        if ($id != NULL) 
+        {
+            $data = $this->Bom_model->get_bomqty($id);
+            echo $data;
+        }
+    }
+
     public function create() 
     {
         $data = array(
@@ -51,6 +74,9 @@ class Sch_produksi extends CI_Controller
 	    'id_produksi' => set_value('id_produksi'),
 	    'kd_produksi' => set_value('kd_produksi'),
 	    'id_model' => set_value('id_model'),
+	    // 'id_bom' => set_value('id_bom'),
+        'id_bom' => $this->Bom_model->get_bom(),
+        'id_bom_selected' => '',
 	    'stok_pemakaian' => set_value('stok_pemakaian'),
 	    'tgl_produksi' => set_value('tgl_produksi'),
 	    'hasil_stok' => set_value('hasil_stok'),
@@ -68,6 +94,7 @@ class Sch_produksi extends CI_Controller
             $data = array(
 		'kd_produksi' => $this->input->post('kd_produksi',TRUE),
 		'id_model' => $this->input->post('id_model',TRUE),
+		'id_bom' => $this->input->post('id_bom',TRUE),
 		'stok_pemakaian' => $this->input->post('stok_pemakaian',TRUE),
 		'tgl_produksi' => $this->input->post('tgl_produksi',TRUE),
 		'hasil_stok' => $this->input->post('hasil_stok',TRUE),
@@ -90,6 +117,7 @@ class Sch_produksi extends CI_Controller
 		'id_produksi' => set_value('id_produksi', $row->id_produksi),
 		'kd_produksi' => set_value('kd_produksi', $row->kd_produksi),
 		'id_model' => set_value('id_model', $row->id_model),
+		'id_bom' => set_value('id_bom', $row->id_bom),
 		'stok_pemakaian' => set_value('stok_pemakaian', $row->stok_pemakaian),
 		'tgl_produksi' => set_value('tgl_produksi', $row->tgl_produksi),
 		'hasil_stok' => set_value('hasil_stok', $row->hasil_stok),
@@ -111,6 +139,7 @@ class Sch_produksi extends CI_Controller
             $data = array(
 		'kd_produksi' => $this->input->post('kd_produksi',TRUE),
 		'id_model' => $this->input->post('id_model',TRUE),
+		'id_bom' => $this->input->post('id_bom',TRUE),
 		'stok_pemakaian' => $this->input->post('stok_pemakaian',TRUE),
 		'tgl_produksi' => $this->input->post('tgl_produksi',TRUE),
 		'hasil_stok' => $this->input->post('hasil_stok',TRUE),
@@ -140,6 +169,7 @@ class Sch_produksi extends CI_Controller
     {
 	$this->form_validation->set_rules('kd_produksi', 'kd produksi', 'trim|required');
 	$this->form_validation->set_rules('id_model', 'id model', 'trim|required');
+	$this->form_validation->set_rules('id_bom', 'id bom', 'trim|required');
 	$this->form_validation->set_rules('stok_pemakaian', 'stok pemakaian', 'trim|required');
 	$this->form_validation->set_rules('tgl_produksi', 'tgl produksi', 'trim|required');
 	$this->form_validation->set_rules('hasil_stok', 'hasil stok', 'trim|required');
@@ -172,6 +202,7 @@ class Sch_produksi extends CI_Controller
     xlsWriteLabel($tablehead, $kolomhead++, "No");
 	xlsWriteLabel($tablehead, $kolomhead++, "Kd Produksi");
 	xlsWriteLabel($tablehead, $kolomhead++, "Id Model");
+	xlsWriteLabel($tablehead, $kolomhead++, "Id Bom");
 	xlsWriteLabel($tablehead, $kolomhead++, "Stok Pemakaian");
 	xlsWriteLabel($tablehead, $kolomhead++, "Tgl Produksi");
 	xlsWriteLabel($tablehead, $kolomhead++, "Hasil Stok");
@@ -180,6 +211,7 @@ class Sch_produksi extends CI_Controller
     xlsWriteLabel($tablehead, $kolomhead++, "No");
 	xlsWriteLabel($tablehead, $kolomhead++, "Kd Produksi");
 	xlsWriteLabel($tablehead, $kolomhead++, "Id Model");
+	xlsWriteLabel($tablehead, $kolomhead++, "Id Bom");
 	xlsWriteLabel($tablehead, $kolomhead++, "Stok Pemakaian");
 	xlsWriteLabel($tablehead, $kolomhead++, "Tgl Produksi");
 	xlsWriteLabel($tablehead, $kolomhead++, "Hasil Stok");
@@ -191,6 +223,7 @@ class Sch_produksi extends CI_Controller
             xlsWriteNumber($tablebody, $kolombody++, $nourut);
 	    xlsWriteLabel($tablebody, $kolombody++, $data->kd_produksi);
 	    xlsWriteNumber($tablebody, $kolombody++, $data->id_model);
+	    xlsWriteNumber($tablebody, $kolombody++, $data->id_bom);
 	    xlsWriteNumber($tablebody, $kolombody++, $data->stok_pemakaian);
 	    xlsWriteLabel($tablebody, $kolombody++, $data->tgl_produksi);
 	    xlsWriteNumber($tablebody, $kolombody++, $data->hasil_stok);

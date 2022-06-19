@@ -17,8 +17,9 @@
             <thead>
                 <tr>
                     <th width="30px">No</th>
-		    <th>Id Material</th>
-		    <th>Id Model</th>
+		    <th>Nama Material</th>
+		    <th>Nama Model</th>
+		    <th>Keterangan</th>
 		    <th>Qty</th>
 		    <th width="200px">Action</th>
                 </tr>
@@ -70,7 +71,7 @@
                         {
                             "data": "id_bom",
                             "orderable": false
-                        },{"data": "id_material"},{"data": "id_model"},{"data": "qty"},
+                        },{"data": "nama_material"},{"data": "nama_model"},{"data": "keterangan"},{"data": "qty"},
                         {
                             "data" : "action",
                             "orderable": false,

@@ -1,5 +1,7 @@
 <?php
 
+use LDAP\Result;
+
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
@@ -17,10 +19,11 @@ class Bom_model extends CI_Model
 
     // datatables
     function json() {
-        $this->datatables->select('id_bom,id_material,id_model,qty');
-        $this->datatables->from('bom');
+        $this->datatables->select('b.id_bom,m.id_material,m.nama_material,mo.id_model,mo.nama_model,mo.keterangan,b.qty');
+        $this->datatables->from('bom b');
         //add this line for join
-        //$this->datatables->join('table2', 'bom.field = table2.field');
+        $this->datatables->join('tbl_material m', 'b.id_material = m.id_material');
+        $this->datatables->join('tbl_model mo', 'b.id_model = mo.id_model');
         $this->datatables->add_column('action', anchor(site_url('bom/read/$1'),'<i class="fa fa-eye" aria-hidden="true"></i>', array('class' => 'btn btn-danger btn-sm'))." 
             ".anchor(site_url('bom/update/$1'),'<i class="fa fa-pencil-square-o" aria-hidden="true"></i>', array('class' => 'btn btn-danger btn-sm'))." 
                 ".anchor(site_url('bom/delete/$1'),'<i class="fa fa-trash-o" aria-hidden="true"></i>','class="btn btn-danger btn-sm" onclick="javasciprt: return confirm(\'Are You Sure ?\')"'), 'id_bom');
@@ -32,6 +35,58 @@ class Bom_model extends CI_Model
     {
         $this->db->order_by($this->id, $this->order);
         return $this->db->get($this->table)->result();
+    }
+
+    function get_bom()
+    {
+        $this->db->select('b.id_bom,m.id_material,m.nama_material,mo.id_model,mo.nama_model,mo.keterangan,b.qty');
+        $this->db->from('bom b');
+        $this->db->join('tbl_material m', 'b.id_material = m.id_material');
+        $this->db->join('tbl_model mo', 'b.id_model = mo.id_model');
+        $this->db->order_by($this->id, $this->order);         
+        $query = $this->db->get(); 
+        if($query->num_rows() != 0)
+        {
+            return $query->result();
+        }
+        else
+        {
+            return false;
+        }
+    }
+    function get_bomid($id)
+    {
+        $this->db->select('b.id_bom,m.id_material,m.nama_material,mo.id_model,mo.nama_model,mo.keterangan,b.qty');
+        $this->db->from('bom b');
+        $this->db->join('tbl_material m', 'b.id_material = m.id_material');
+        $this->db->join('tbl_model mo', 'b.id_model = mo.id_model');
+        $this->db->where($this->id, $id);
+        $this->db->order_by($this->id, $this->order);         
+        $query = $this->db->get(); 
+        // return $query->row();
+        foreach ($query->result() as $row) {
+            // $output = $row->id_model;
+            $output = $row->id_model;
+        }
+        //return data kabupaten
+        return $output;
+    }
+    function get_bomqty($id)
+    {
+        $this->db->select('b.id_bom,m.id_material,m.nama_material,mo.id_model,mo.nama_model,mo.keterangan,b.qty');
+        $this->db->from('bom b');
+        $this->db->join('tbl_material m', 'b.id_material = m.id_material');
+        $this->db->join('tbl_model mo', 'b.id_model = mo.id_model');
+        $this->db->where($this->id, $id);
+        $this->db->order_by($this->id, $this->order);         
+        $query = $this->db->get(); 
+        // return $query->row();
+        foreach ($query->result() as $row) {
+            // $output = $row->id_model;
+            $output = $row->qty;
+        }
+        //return data kabupaten
+        return $output;
     }
 
     // get data by id
