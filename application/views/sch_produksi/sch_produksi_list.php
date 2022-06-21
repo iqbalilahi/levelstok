@@ -137,37 +137,37 @@
                 });
             });
         
-            if ($("#formImport").length > 0) {
-        $("#formImport").validate({
-            errorClass: "my-error-class",
-            validClass: "my-valid-class",
-            submitHandler: function(form) {
-                formdata = new FormData(form);
-                $.ajax({
-                    type: "POST",
-                    url: "<?php echo base_url('sch_produksi/import') ?>",
-                    data: formdata,
-                    processData: false,
-                    contentType: false,
-                    cache: false,
-                    async: false,
-                    success: function(data) {
-                        $('#my-modal2').modal('hide');
-                        if (data == 1 || data == true) {
-                            document.getElementById("formImport").reset();
-                            swalInputSuccess();
-                            show_data();
-                        } else if (data == 401) {
-                            document.getElementById("formImport").reset();
-                            swalIdDouble();
-                        } else {
-                            document.getElementById("formImport").reset();
-                            swalInputFailed();
-                        }
-                    }
-                });
-                return false;
-            }
-        });
-    }
+    // if ($("#formImport").length > 0) {
+    //     $("#formImport").validate({
+    //         errorClass: "my-error-class",
+    //         validClass: "my-valid-class",
+    //         submitHandler: function(form) {
+    //             formdata = new FormData(form);
+    //             $.ajax({
+    //                 type: "POST",
+    //                 url: "<?php echo base_url('sch_produksi/import') ?>",
+    //                 data: formdata,
+    //                 processData: false,
+    //                 contentType: false,
+    //                 cache: false,
+    //                 async: false,
+    //                 success: function(data) {
+    //                     $('#my-modal2').modal('hide');
+    //                     if (data == 1 || data == true) {
+    //                         document.getElementById("formImport").reset();
+    //                         swalInputSuccess();
+    //                         show_data();
+    //                     } else if (data == 401) {
+    //                         document.getElementById("formImport").reset();
+    //                         swalIdDouble();
+    //                     } else {
+    //                         document.getElementById("formImport").reset();
+    //                         swalInputFailed();
+    //                     }
+    //                 }
+    //             });
+    //             return false;
+    //         }
+    //     });
+    // }
         </script>
