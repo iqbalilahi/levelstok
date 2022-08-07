@@ -1,5 +1,6 @@
 <div class="content-wrapper">
     <section class="content">
+    <div id="notip"></div>
         <div class="row">
             <div class="col-xs-12">
                 <div class="box box-warning box-solid">
@@ -57,7 +58,7 @@
 							</div>
 
 							<div class="form-group">
-								<label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Catatan </label>
+								<label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Sample </label>
 								<div class="col-sm-9">
 									<a href="<?php echo base_url() . 'sch_produksi/excel'; ?>" for="form-field-1"> Sample Download </label></a>
 								</div>
@@ -83,6 +84,8 @@
         <script src="<?php echo base_url('assets/js/jquery-1.11.2.min.js') ?>"></script>
         <script src="<?php echo base_url('assets/datatables/jquery.dataTables.js') ?>"></script>
         <script src="<?php echo base_url('assets/datatables/dataTables.bootstrap.js') ?>"></script>
+        <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
+
         <script type="text/javascript">
             $(document).ready(function() {
                 $.fn.dataTableExt.oApi.fnPagingInfo = function(oSettings)
@@ -137,37 +140,86 @@
                 });
             });
         
-    // if ($("#formImport").length > 0) {
-    //     $("#formImport").validate({
-    //         errorClass: "my-error-class",
-    //         validClass: "my-valid-class",
-    //         submitHandler: function(form) {
-    //             formdata = new FormData(form);
-    //             $.ajax({
-    //                 type: "POST",
-    //                 url: "<?php echo base_url('sch_produksi/import') ?>",
-    //                 data: formdata,
-    //                 processData: false,
-    //                 contentType: false,
-    //                 cache: false,
-    //                 async: false,
-    //                 success: function(data) {
-    //                     $('#my-modal2').modal('hide');
-    //                     if (data == 1 || data == true) {
-    //                         document.getElementById("formImport").reset();
-    //                         swalInputSuccess();
-    //                         show_data();
-    //                     } else if (data == 401) {
-    //                         document.getElementById("formImport").reset();
-    //                         swalIdDouble();
-    //                     } else {
-    //                         document.getElementById("formImport").reset();
-    //                         swalInputFailed();
-    //                     }
-    //                 }
-    //             });
-    //             return false;
-    //         }
-    //     });
-    // }
+    if ($("#formImport").length > 0) {
+		$("#formImport").validate({
+			errorClass: "my-error-class",
+			validClass: "my-valid-class",
+			rules: {
+				kd_produksi: {
+					required: true,
+					maxlength: 14,
+				},
+				id_model: {
+					required: true,
+					digits: true,
+				},
+                id_bom: {
+					required: true,
+					digits: true,
+				},
+				stok_pemakaian: {
+					required: true,
+                    digits: true,
+				},
+				tgl_produksi: {
+					required: true,
+				},
+                hasil_stok: {
+					required: true,
+				},
+			},
+			messages: {
+				kd_produksi: {
+					required: "Kode produksi harus diisi!"
+				},
+				id_model: {
+					required: "Id Model harus diisi!"
+				},
+                id_bom: {
+					required: "Id Bom harus diisi!"
+				},
+				stok_pemakaian: {
+					required: "Stok Pakai harus diisi!"
+				},
+				tgl_produksi: {
+					required: "Tanggal Produksi harus diisi!"
+				},
+                hasil_stok: {
+					required: "Hasil Stok harus diisi!"
+				},
+			},
+			submitHandler: function(form) {
+				formdata = new FormData(form);
+				$.ajax({
+					type: "POST",
+					url: "<?php echo base_url('sch_produksi/import') ?>",
+					data: formdata,
+					processData: false,
+					contentType: false,
+					cache: false,
+					async: false,
+					success: function(data) {
+                        if ("status" == "success") {
+                            document.getElementById("formImport").reset();
+                            $( "#notip" ).append( '<div class="alert alert-success alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><h4><i class="icon fa fa-check"></i> Sukses!</h4>Data berhasil di input/update.</div>' );
+                            setTimeout(
+                            function() 
+                            {
+                                location.replace("<?php echo base_url('sch_produksi') ?>");
+                            }, 2000);
+                        }
+                        document.getElementById("formImport").reset();
+                            $( "#notip" ).append( '<div class="alert alert-danger alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><h4><i class="icon fa fa-check"></i> Gagal!</h4>Data gagal di input/update.</div>' );
+                            setTimeout(
+                            function() 
+                            {
+                                location.replace("<?php echo base_url('sch_produksi') ?>");
+                            }, 2000);
+                        $("#my-modal3").modal('hide');
+					}
+				});
+				return false;
+			}
+		});
+	}
         </script>

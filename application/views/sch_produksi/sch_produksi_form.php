@@ -29,7 +29,7 @@
 				</div>
 			</td>
 		</tr>
-			<tr><td width='200'> <?php echo form_error('id_model') ?></td><td><input type="text" class="form-control" name="id_model" id="id_model" value="" readonly /></td></tr>
+			<tr><td width='200'> <?php echo form_error('id_model') ?></td><td><input type="hidden" class="form-control" name="id_model" id="id_model" value="" readonly /></td></tr>
 		
 			<tr><td width='200'></td><td><input type="text" class="form-control" name="qty" id="qty" value="" readonly /></td></tr>
 		

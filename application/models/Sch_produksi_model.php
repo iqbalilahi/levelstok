@@ -34,6 +34,18 @@ class Sch_produksi_model extends CI_Model
         return $this->db->get($this->table)->result();
     }
 
+    function joinModel()
+    {
+        # code...
+        $this->db->select('sp.id_produksi, sp.kd_produksi, sp.id_model as spidmod, m.id_model, sp.id_bom as spidbom, b.id_bom,b.qty, m.nama_model, m.keterangan, sp.stok_pemakaian, sp.tgl_produksi, sp.hasil_stok');
+        $this->db->from('sch_produksi sp');
+        $this->db->join('bom b', 'sp.id_bom = b.id_bom');
+        $this->db->join('tbl_model m', 'b.id_model = m.id_model');
+        $query =  $this->db->get();
+        $row = $query->result();
+        return $row;
+    }
+
     // get data by id
     function get_by_id($id)
     {
@@ -72,6 +84,17 @@ class Sch_produksi_model extends CI_Model
         $this->db->insert($this->table, $data);
     }
 
+    // insert data
+    function insert_imp($data)
+    {
+        $this->db->insert($this->table, $data);
+        $insert_id = $this->db->insert_id();
+        if($insert_id > 0){
+            return $insert_id;
+        }else{
+            return FALSE;
+        }
+    }
     // update data
     function update($id, $data)
     {
@@ -79,9 +102,21 @@ class Sch_produksi_model extends CI_Model
         $this->db->update($this->table, $data);
     }
 
-    function view_where_noisdelete($id)
+    function view_where_noisdelete($kd_produksi = '',$tgl_produksi = '')
     {
-        $this->db->where($this->id,$id);
+        // $this->db->where($this->id,$id);
+        $multipleWhere = array('kd_produksi' => $kd_produksi, 'tgl_produksi' => $tgl_produksi);
+        
+        $this->db->where($multipleWhere);
+        return $this->db->get($this->table)->row();
+    }
+    function update_where_noisdelete($kd_produksi,$tgl_produksi,$data_sch)
+    {
+        $multipleWhere = array('kd_produksi' => $kd_produksi, 'tgl_produksi' => $tgl_produksi);
+        
+        $this->db->where($multipleWhere);
+        $this->db->update($this->table, $data_sch);
+        return TRUE;
     }
 
     // delete data

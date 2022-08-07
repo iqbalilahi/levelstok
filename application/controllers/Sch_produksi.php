@@ -1,5 +1,7 @@
 <?php
 
+use LDAP\Result;
+
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
@@ -117,7 +119,9 @@ class Sch_produksi extends CI_Controller
 		'id_produksi' => set_value('id_produksi', $row->id_produksi),
 		'kd_produksi' => set_value('kd_produksi', $row->kd_produksi),
 		'id_model' => set_value('id_model', $row->id_model),
-		'id_bom' => set_value('id_bom', $row->id_bom),
+        'id_bom' => $this->Bom_model->get_bom(),
+        'id_bom_selected' => set_value('id_bom', $row->id_bom),
+		// 'id_bom' => set_value('id_bom', $row->id_bom),
 		'stok_pemakaian' => set_value('stok_pemakaian', $row->stok_pemakaian),
 		'tgl_produksi' => set_value('tgl_produksi', $row->tgl_produksi),
 		'hasil_stok' => set_value('hasil_stok', $row->hasil_stok),
@@ -178,6 +182,14 @@ class Sch_produksi extends CI_Controller
 	$this->form_validation->set_error_delimiters('<span class="text-danger">', '</span>');
     }
 
+    public function test()
+    {
+        # code...
+        $test = $this->Sch_produksi_model->joinModel();
+        echo "<pre>";
+        print_r($test);
+        echo "</pre>";
+    }
     public function excel()
     {
         $this->load->helper('exportexcel');
@@ -185,7 +197,7 @@ class Sch_produksi extends CI_Controller
         $judul = "sch_produksi";
         $tablehead = 0;
         $tablebody = 1;
-        $nourut = 1;
+        $no = 1;
         //penulisan header
         header("Pragma: public");
         header("Expires: 0");
@@ -199,94 +211,100 @@ class Sch_produksi extends CI_Controller
         xlsBOF();
 
         $kolomhead = 0;
-    xlsWriteLabel($tablehead, $kolomhead++, "No");
+        // xlsWriteLabel($tablehead, $kolomhead++, "");
+        xlsWriteLabel($tablehead, $kolomhead++, "No");
 	xlsWriteLabel($tablehead, $kolomhead++, "Kd Produksi");
 	xlsWriteLabel($tablehead, $kolomhead++, "Id Model");
 	xlsWriteLabel($tablehead, $kolomhead++, "Id Bom");
 	xlsWriteLabel($tablehead, $kolomhead++, "Stok Pemakaian");
 	xlsWriteLabel($tablehead, $kolomhead++, "Tgl Produksi");
 	xlsWriteLabel($tablehead, $kolomhead++, "Hasil Stok");
-    
-    xlsWriteLabel($tablehead, $kolomhead++, "");
-    xlsWriteLabel($tablehead, $kolomhead++, "No");
-	xlsWriteLabel($tablehead, $kolomhead++, "Kd Produksi");
+	xlsWriteLabel($tablehead, $kolomhead++, "");
 	xlsWriteLabel($tablehead, $kolomhead++, "Id Model");
+	xlsWriteLabel($tablehead, $kolomhead++, "Nama model");
+	xlsWriteLabel($tablehead, $kolomhead++, "Keterangan");
+	xlsWriteLabel($tablehead, $kolomhead++, "");
 	xlsWriteLabel($tablehead, $kolomhead++, "Id Bom");
-	xlsWriteLabel($tablehead, $kolomhead++, "Stok Pemakaian");
-	xlsWriteLabel($tablehead, $kolomhead++, "Tgl Produksi");
-	xlsWriteLabel($tablehead, $kolomhead++, "Hasil Stok");
+	xlsWriteLabel($tablehead, $kolomhead++, "Id Model");
+	xlsWriteLabel($tablehead, $kolomhead++, "qty");
 
-	foreach ($this->Sch_produksi_model->get_all() as $data) {
+	foreach ($this->Sch_produksi_model->joinModel() as $data) {
             $kolombody = 0;
-
             //ubah xlsWriteLabel menjadi xlsWriteNumber untuk kolom numeric
-            xlsWriteNumber($tablebody, $kolombody++, $nourut);
+	    // xlsWriteLabel($tablebody, $kolombody++, "");
+	    xlsWriteNumber($tablebody, $kolombody++, $no);
 	    xlsWriteLabel($tablebody, $kolombody++, $data->kd_produksi);
-	    xlsWriteNumber($tablebody, $kolombody++, $data->id_model);
-	    xlsWriteNumber($tablebody, $kolombody++, $data->id_bom);
+	    xlsWriteNumber($tablebody, $kolombody++, $data->spidmod);
+	    xlsWriteNumber($tablebody, $kolombody++, $data->spidbom);
 	    xlsWriteNumber($tablebody, $kolombody++, $data->stok_pemakaian);
 	    xlsWriteLabel($tablebody, $kolombody++, $data->tgl_produksi);
 	    xlsWriteNumber($tablebody, $kolombody++, $data->hasil_stok);
+	    xlsWriteLabel($tablebody, $kolombody++,"");
+	    xlsWriteNumber($tablebody, $kolombody++, $data->id_model);
+	    xlsWriteLabel($tablebody, $kolombody++, $data->nama_model);
+	    xlsWriteLabel($tablebody, $kolombody++, $data->keterangan);
+	    xlsWriteLabel($tablebody, $kolombody++,"");
+	    xlsWriteNumber($tablebody, $kolombody++, $data->id_bom);
+	    xlsWriteNumber($tablebody, $kolombody++, $data->id_model);
+	    xlsWriteNumber($tablebody, $kolombody++, $data->qty);
 
 	    $tablebody++;
-            $nourut++;
+	    $no++;
         }
-
         xlsEOF();
-        exit();
     }
 
     public function import()
     {
-        
-            $files = $_FILES;
-            $file = $files['file'];
-            $fname = $file['tmp_name'];
-            $file = $_FILES['file']['name'];
-            $fname = $_FILES['file']['tmp_name'];
-            $ext = explode('.', $file);
-            /** Include path **/
-            set_include_path(APPPATH . 'third_party/PHPExcel/Classes/');
-            /** PHPExcel_IOFactory */
-            include 'PHPExcel/IOFactory.php';
-            $objPHPExcel = PHPExcel_IOFactory::load($fname);
-            $allDataInSheet = $objPHPExcel->getActiveSheet()->toArray(null, false, true);
-            $data_exist = [];
-            foreach ($allDataInSheet as $ads) {
-                if (array_filter($ads)) {
-                    array_push($data_exist, $ads);
-                }
+        $files = $_FILES;
+        $file = $files['file'];
+        $fname = $file['tmp_name'];
+        $file = $_FILES['file']['name'];
+        $fname = $_FILES['file']['tmp_name'];
+        $ext = explode('.', $file);
+        /** Include path **/
+        set_include_path(APPPATH . 'third_party/PHPExcel/Classes/');
+        /** PHPExcel_IOFactory */
+        include 'PHPExcel/IOFactory.php';
+        $objPHPExcel = PHPExcel_IOFactory::load($fname);
+        $allDataInSheet = $objPHPExcel->getActiveSheet()->toArray(null, false, true);
+        $data_exist = [];
+        foreach ($allDataInSheet as $ads) {
+            if (array_filter($ads)) {
+                array_push($data_exist, $ads);
             }
-            foreach ($data_exist as $key => $value) {
-                if ($key == '0') {
-                    continue;
-                } else {
-					$data_id = array(
-						'id_produksi'  => $value[0]
-					);
+        }
+        foreach ($data_exist as $key => $value) {
+            if ($key == '0') {
+                continue;
+            } else {
+                    $kd_produksi = $value[2];
+                    $tgl_produksi  = $value[6];
 
-                    $data_sch = array(
-                        'id_produksi' => $value[0],
-                        'kd_produksi' => $value[17],
-                        'id_model' => $value[1],
-                        'id_bom' => $value[2],
-                        'stok_pemakaian' => $value[3],
-                        'tgl_produksi' => $value[4],
-                        'hasil_stok' => $value[5]
-					);
-					$cek = $this->Sch_produksi_model->view_where_noisdelete($data_id)->num_rows();
-					if($cek > 0) {
-						$result = $this->Sch_produksi_model->update($this->input->post($data_id, TRUE), $data_sch);
-					} else {
-						$result = $this->Sch_produksi_model->insert($data_sch);
-					}
+                $data_sch = array(
+                    // 'id_produksi' => $this->db->insert_id(),
+                    'kd_produksi' => $value[2],
+                    'id_model' => $value[3],
+                    'id_bom' => $value[4],
+                    'stok_pemakaian' => $value[5],
+                    'tgl_produksi' => $value[6],
+                    'hasil_stok' => $value[7]
+                );
+                $cek = $this->Sch_produksi_model->view_where_noisdelete($kd_produksi,$tgl_produksi);
+                
+                if(count($cek) > 0) {
+                    $hasil = $this->Sch_produksi_model->update_where_noisdelete($kd_produksi,$tgl_produksi, $data_sch);
+                } else {
+                   $hasil = $this->Sch_produksi_model->insert_imp($data_sch);
                 }
             }
-            if ($result == 1) {
-                $this->session->set_flashdata('message', 'Update/Insert Record Success');
-            }
-            $this->session->set_flashdata('message', 'Sorry Record Error');
-            redirect(site_url('sch_produksi'));
+        }
+        if ($hasil == true ) {
+            $result = array('status'=>'success');
+        } else {
+            $result = array('status' => 'error', 'message'=> 'Gagal Insert data!');
+        }
+        echo json_encode($result);
         
 	}
 
